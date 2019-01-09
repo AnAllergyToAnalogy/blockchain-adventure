@@ -1,0 +1,17 @@
+{
+  "name": "chain_adventure",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ganache-cli": "^6.2.5",
+    "mocha": "^5.2.0",
+    "solc": "^0.5.2",
+    "web3": "^1.0.0-beta.37"
+  }
+}
