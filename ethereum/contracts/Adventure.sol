@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 contract Adventure {
     //Gotta encode and decode the choice strings on the frontend
 
-    event Situation(uint id, string situationText, bytes32[] choiceTexts);
+    event Situation(uint indexed id, string situationText, bytes32[] choiceTexts);
 
 
     //fromSituation    //choiceNum   //toSituation
@@ -80,5 +80,12 @@ contract Adventure {
 
     function get_signature(uint situation) public view returns(string memory){
         return signatures[authors[situation]];
+    }
+    function get_author(uint situation) public view returns(address){
+        return authors[situation];
+    }
+
+    function get_next_situation(uint fromSituation, uint fromChoice) public view returns(uint){
+        return links[fromSituation][fromChoice];
     }
 }
