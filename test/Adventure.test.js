@@ -63,6 +63,8 @@ let situations = [
     }
 ];
 
+let signature = "AnAllergyToAnalogy";
+
 let accounts;
 let contract;
 beforeEach(async () => {
@@ -138,7 +140,26 @@ describe("Adventure Contract", () =>{
             }
         }
     });
-    //Cbf testing that can't deploy with no choices
+
+    it("Can't deploy with no choices in initial situation", async () => {
+        let failed = false;
+        try{
+            contract = await new web3.eth.Contract(abi_array)
+                .deploy({
+                    data: compiledContract.Adventure.evm.bytecode.object,
+                    arguments: [
+                        situations[2].situationText,
+                        situations[2].choiceText
+                    ]
+                })
+                .send({from: accounts[0], gas:'6000000'});
+            contract.setProvider(provider);
+        }catch(err){
+            failed = true;
+        }
+        assert(failed);
+
+    });
 
 //add_situation
     it("Can add situation", async () => {
@@ -272,35 +293,57 @@ describe("Adventure Contract", () =>{
                 assert(DeChoice(situation.choiceText[i]) === DeChoice(situations[1].choiceText[i]));
             }
         }
-        // assert(true);
+    });
 
+//Author
+    it("Situation ascribes correct author address", async () => {
+        let author = await contract.methods.get_author('0').call();
+        assert(author === accounts[0]);
+    });
+
+//add_signature
+    it("Can add signature", async () => {
+        try{
+            await contract.methods.add_signature(signature).send({
+                from: accounts[0],
+                gas: '6000000'
+            });
+            assert(true);
+        }catch(err){
+            assert(false);
+        }
+    });
+
+//get_signature
+    it("Reports correct signature for situation", async () => {
+        await contract.methods.add_signature(signature).send({
+            from: accounts[0],
+            gas: '6000000'
+        });
+
+        let signature_reported = await contract.methods.get_signature('0').call();
+
+        assert(signature_reported === signature);
     });
 
 
-//     it("Situation ascribes correct author address", async () => {
-//
-//     });
-//
-//
-// //add_signature
-//     it("Can add signature", async () => {
-//
-//     });
-//
-// //get_signature
-//     it("Reports correct signature for situation", async () => {
-//
-//     });
-//
-// //get_author
-//     it("Reports correct author address for situation", async () => {
-//
-//     });
-//
-// //get_next_situation
-//     it("Follows correct choice path", async () => {
-//
-//     });
+
+//get_next_situation
+    it("Follows correct choice path", async () => {
+        await contract.methods.add_situation(
+            situations[1].fromSituation,
+            situations[1].fromChoice,
+            situations[1].situationText,
+            situations[1].choiceText
+        ).send({
+            from: accounts[0],
+            gas: '6000000'
+        });
+
+        let next_reported = await contract.methods.get_next_situation('0','0').call();
+
+        assert(next_reported === '1');
+    });
 
 
 
