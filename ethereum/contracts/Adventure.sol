@@ -55,6 +55,10 @@ contract Adventure {
         //Make sure this situation.choice hasn't been defined
         require(links[fromSituation][fromChoice] == 0,"choice");
 
+        for(uint i = 0; i < choiceTexts.length; i++){
+            require(choiceTexts[i].length > 0,"choiceLength");
+        }
+
         //Increment situationCount, and this is the new situation num
         situationCount++;
 

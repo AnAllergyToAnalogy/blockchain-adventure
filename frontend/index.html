@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Adventure Game</title>
+    <script src="js/Game.js"></script>
+    <script src="js/Contract.js"></script>
+</head>
+<style>
+
+    textarea {
+        border: none;
+        /*overflow: auto;*/
+        outline: none;
+
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+
+        resize: none; /*remove the resize handle on the bottom right*/
+
+        /*resize: none;*/
+        overflow: hidden;
+        min-height: 15px;
+        /*max-height: 100px;*/
+    }
+    input{
+        border: none;
+        /*overflow: auto;*/
+        outline: none;
+
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+
+    }
+
+    a{
+        outline: none;
+        color: inherit; /* blue colors for links too */
+        text-decoration: inherit; /* no underline */
+    }
+    body{
+
+        background-color: black;
+        color:white;
+
+        font-family: monospace;
+        font-size: 14px;
+        font-style: normal;
+        font-variant: normal;
+        /*font-weight: 500;*/
+        line-height: 16px;
+
+        text-align: center;
+    }
+    #game{
+        display:none;
+        padding-top: 56px;
+
+        max-width:800px;
+        margin: 0 auto;
+    }
+    #situation{
+        /*display:none;*/
+    }
+    /*Situation*/
+    .game-over{
+        margin-top: 28px;
+    }
+    .option{
+        margin-top: 14px;
+        /*width: 100%;*/
+    }
+    .option:hover{
+        background-color: white;
+        color:black;
+    }
+    .situation-text{
+        padding-top:14px;
+        padding-bottom:14px;
+    }
+    /*Credit*/
+    .credit{
+        color: rgba(255,255,255,0.2);
+        margin-top: 100px;
+        text-align:left;
+        /*position: absolute;*/
+        /*bottom:0;*/
+
+
+    }
+    .credit:hover{
+        color: #00FF00;
+    }
+
+
+    #welcome{
+        /*display:none;*/
+    }
+    /*Wecome*/
+    .start:hover{
+
+        background-color: white;
+        color:black;
+
+    }
+
+
+    #create{
+        /*display:none;*/
+    }
+    .input-situation{
+        width:100%;
+        /*resize:vertical;*/
+        background-color: #222222;
+        color:inherit;
+        height:15px;
+    }
+    .input-situation:focus{
+        background-color: #111111;
+    }
+
+    .prev-option-selected{
+        background-color: white;
+        color: black;
+    }
+    .prev-option{
+
+    }
+    .input-button{
+        padding-left: 5px;
+        padding-right: 5px;
+
+    }
+    .input-button:hover{
+        background-color: white;
+        color:black;
+    }
+    .input-choice{
+        width:100%;
+        color:white;
+        background-color: #222222;
+        font: inherit;
+        margin-bottom:14px;
+    }
+    .input-choice:focus{
+        background-color: white;
+        color:black;
+    }
+    .input-choice-invalid{
+        background-color: #330000;
+        color:red;
+    }
+    .input-choice-invalid:focus{
+        color: black;
+        background-color: white;
+    }
+
+    .input-error{
+        color:red;
+    }
+
+
+    #confirm{
+        /*display: none;*/
+    }
+    /* confirm */
+    .confirm-button-edit{
+        color:orange;
+    }
+    .confirm-button-edit:hover{
+        color:black;
+        background-color:orange;
+    }
+
+    .confirm-button-submit{
+        color:#00CC00;
+    }
+    .confirm-button-submit:hover{
+        background-color:#00CC00;
+        color:#000000;
+    }
+
+
+
+</style>
+
+
+<script>
+    function resize_textarea(element) {
+        // console.log(element);
+        element.style.height = "15px";
+        element.style.height = (element.scrollHeight)+"px";
+    }
+</script>
+<body>
+
+    <div id="game">
+        <div id="welcome">
+            <div class="title">
+                Title screen goes here.
+            </div>
+
+            <a href="" class="control-button" id="start-game">
+                <div class="start">
+                    << Click Here to Begin! >>
+                </div>
+            </a>
+        </div>
+
+        <div id="situation">
+            <div class="frame-line">
+                ----------------------------------
+            </div>
+            <div id="situation-text" class="situation-text">
+                You are a magic fish and you live under the sea. Get out of my house you savage. Or else I'm gonna throw some beans at you and then you'll die from bean exposure.
+            </div>
+            <div class="frame-line">
+                ----------------------------------
+            </div>
+
+            <a href=""><div class="option">Okay Fine</div></a>
+            <div class="option">Never</div>
+
+            <div class="credit">
+                <div id="credit-signature">CoolGuy</div>
+                <div id="credit-author">0x00000000</div>
+            </div>
+        </div>
+
+        <div id="create">
+            <div class="frame-double-line">=============================</div>
+            <div >Previous situation:</div>
+            <div class="frame-line">
+                ----------------------------------
+            </div>
+            <div id="create-prev-situation">You are in the forest and millions of ducks are around you trying to destroy your house and you have no friends so now what are you gonna do?</div>
+            <div class="frame-line">
+                ----------------------------------
+            </div>
+
+            <div id="create-prev-choices">
+                <div>Go into the house</div>
+                <div class="prev-option-selected">SELECTED: Buy a new house</div>
+                <div>Shoot the mailman</div>
+            </div>
+
+
+            <div class="frame-double-line">=============================</div>
+
+            <div>The next situation:</div>
+            <div class="frame-line">
+                ----------------------------------
+            </div>
+            <textarea
+                    class="input-situation"
+                      onkeyup="resize_textarea(this)"
+            ></textarea>
+            <div class="frame-line">
+                ----------------------------------
+            </div>
+            <input type="text" class="input-choice"/>
+            <input type="text" class="input-choice input-choice-invalid"/>
+            <div>
+                <span class="input-button">Add a Choice</span> |
+                <span class="input-button">Submit Situaton</span>
+            </div>
+            <div class="input-error">
+                This is the problem with your situation!
+            </div>
+        </div>
+
+        <div id="confirm">
+            <div class="frame-double-line">=============================</div>
+            <div>You are about to create this situation:</div>
+            <div class="frame-double-line">=============================</div>
+            <div>You are in the forest and millions of ducks are around you trying to destroy your house and you have no friends so now what are you gonna do?</div>
+            <div class="frame-line">
+                ----------------------------------
+            </div>
+            <div>Go into the house</div>
+            <div>Buy a new house</div>
+            <div>Shoot the mailman</div>
+
+            <div class="frame-double-line">=============================</div>
+
+            <div>
+                <span class="confirm-button-edit">Change something</span> |
+                <span class="confirm-button-submit">Submit it!</span>
+            </div>
+
+        </div>
+
+        <div id="wait">
+            <div class="frame-line">
+                ----------------------------------
+            </div>
+            <div class="situation-text">
+                A transaction has been made with your new situation.
+                You can stick around here and wait for it to be confirmed,
+                or you can go back to the start of the game and play again.
+                You can also sign your name and it'll be added to any of the situations you've created.
+            </div>
+            <div class="frame-line">
+                ----------------------------------
+            </div>
+
+            <a href="">
+                <div class="option">Back to the start</div>
+            </a>
+            <div class="option">Add signature</div>
+
+        </div>
+        
+        
+    </div>
+
+</body>
+<script>Game(
+    document.getElementById("game"),
+    Contract()
+);</script>
+</html>

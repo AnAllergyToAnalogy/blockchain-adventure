@@ -60,6 +60,11 @@ let situations = [
         fromChoice: 0,
         situationText: "Non existent situation",
         choiceText: Choices([])
+    },{ //8
+        fromSituation: 0,
+        fromChoice: 0,
+        situationText: "Situation with empty choices",
+        choiceText: Choices(['','','',''])
     }
 ];
 
@@ -264,6 +269,24 @@ describe("Adventure Contract", () =>{
                 situations[7].fromChoice,
                 situations[7].situationText,
                 situations[7].choiceText
+            ).send({
+                from: accounts[0],
+                gas: '6000000'
+            });
+        }catch(err){
+            failed = true;
+        }
+        assert(failed);
+    });
+    it("Can't define empty choices", async () =>{
+        let failed = false;
+        try{
+            await contract.methods.add_situation(
+                situations[8].fromSituation,
+                situations[8].fromChoice,
+                situations[8].situationText,
+                // situations[8].choiceText
+                ['','','','']
             ).send({
                 from: accounts[0],
                 gas: '6000000'
