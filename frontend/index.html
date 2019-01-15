@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Adventure Game</title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js" integrity="sha256-nWBTbvxhJgjslRyuAKJHK+XcZPlCnmIAAMixz6EefVk=" crossorigin="anonymous"></script>
+
     <script src="js/Game.js"></script>
     <script src="js/Contract.js"></script>
+
 </head>
 <style>
 
@@ -69,8 +72,9 @@
         margin-top: 28px;
     }
     .option{
+        margin: 0 auto;
         margin-top: 14px;
-        /*width: 100%;*/
+        width: 80%;
     }
     .option:hover{
         background-color: white;
@@ -110,20 +114,26 @@
     #create{
         /*display:none;*/
     }
-    .input-situation{
-        width:100%;
+    #input-situation{
+        width:80%;
+        margin: 0 auto;
+
         /*resize:vertical;*/
         background-color: #222222;
         color:inherit;
         height:15px;
     }
-    .input-situation:focus{
-        background-color: #111111;
+    #input-situation:focus{
+        background-color: white;
+        color:black;
+
     }
 
     .prev-option-selected{
         background-color: white;
         color: black;
+        margin: 0 auto;
+        width:80%;
     }
     .prev-option{
 
@@ -138,10 +148,12 @@
         color:black;
     }
     .input-choice{
-        width:100%;
+        width:80%;
+
         color:white;
         background-color: #222222;
         font: inherit;
+        margin: 0 auto;
         margin-bottom:14px;
     }
     .input-choice:focus{
@@ -157,7 +169,7 @@
         background-color: white;
     }
 
-    .input-error{
+    #input-error{
         color:red;
     }
 
@@ -166,26 +178,38 @@
         /*display: none;*/
     }
     /* confirm */
-    .confirm-button-edit{
+    #confirm-button-edit{
         color:orange;
     }
-    .confirm-button-edit:hover{
+    #confirm-button-edit:hover{
         color:black;
         background-color:orange;
     }
 
-    .confirm-button-submit{
+    #confirm-button-submit{
         color:#00CC00;
     }
-    .confirm-button-submit:hover{
+    #confirm-button-submit:hover{
         background-color:#00CC00;
         color:#000000;
     }
 
 
+    .button-sign{
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+    .button-sign:hover{
+        background-color: white;
+        color:black;
+    }
 
 </style>
-
+<style>
+    #measurement{
+        position: absolute; top: -100px;
+    }
+</style>
 
 <script>
     function resize_textarea(element) {
@@ -195,6 +219,7 @@
     }
 </script>
 <body>
+    <div id="measurement">=</div>
 
     <div id="game">
         <div id="welcome">
@@ -211,13 +236,13 @@
 
         <div id="situation">
             <div class="frame-line">
-                ----------------------------------
+                ----
             </div>
             <div id="situation-text" class="situation-text">
                 You are a magic fish and you live under the sea. Get out of my house you savage. Or else I'm gonna throw some beans at you and then you'll die from bean exposure.
             </div>
             <div class="frame-line">
-                ----------------------------------
+                ----
             </div>
 
             <a href=""><div class="option">Okay Fine</div></a>
@@ -230,15 +255,11 @@
         </div>
 
         <div id="create">
-            <div class="frame-double-line">=============================</div>
+            <div class="frame-double-line">====</div>
             <div >Previous situation:</div>
-            <div class="frame-line">
-                ----------------------------------
-            </div>
+            <div class="frame-line">----</div>
             <div id="create-prev-situation">You are in the forest and millions of ducks are around you trying to destroy your house and you have no friends so now what are you gonna do?</div>
-            <div class="frame-line">
-                ----------------------------------
-            </div>
+            <div class="frame-line">----</div>
 
             <div id="create-prev-choices">
                 <div>Go into the house</div>
@@ -247,78 +268,93 @@
             </div>
 
 
-            <div class="frame-double-line">=============================</div>
+            <div class="frame-double-line">====</div>
 
             <div>The next situation:</div>
-            <div class="frame-line">
-                ----------------------------------
-            </div>
+            <div class="frame-line">----</div>
+            <!--class="input-situation"-->
             <textarea
-                    class="input-situation"
+                    id="input-situation"
+
                       onkeyup="resize_textarea(this)"
             ></textarea>
-            <div class="frame-line">
-                ----------------------------------
+            <div class="frame-line">----</div>
+            <div id="input-choices">
+
             </div>
-            <input type="text" class="input-choice"/>
-            <input type="text" class="input-choice input-choice-invalid"/>
+            <!--<input type="text" class="input-choice"/>-->
+            <!--<input type="text" class="input-choice input-choice-invalid"/>-->
             <div>
-                <span class="input-button">Add a Choice</span> |
-                <span class="input-button">Submit Situaton</span>
+                <span class="input-button" id="input-add-choice">Add a Choice</span> |
+                <span class="input-button" id="input-submit-situation">Submit Situaton</span>
             </div>
-            <div class="input-error">
+            <div id="input-error">
                 This is the problem with your situation!
             </div>
         </div>
 
         <div id="confirm">
-            <div class="frame-double-line">=============================</div>
+            <div class="frame-double-line">====</div>
             <div>You are about to create this situation:</div>
-            <div class="frame-double-line">=============================</div>
-            <div>You are in the forest and millions of ducks are around you trying to destroy your house and you have no friends so now what are you gonna do?</div>
-            <div class="frame-line">
-                ----------------------------------
-            </div>
-            <div>Go into the house</div>
-            <div>Buy a new house</div>
-            <div>Shoot the mailman</div>
+            <div class="frame-double-line">====</div>
+            <div id="confirm-situation">You are in the forest and millions of ducks are around you trying to destroy your house and you have no friends so now what are you gonna do?</div>
+            <div class="frame-line">----</div>
+            <div id="confirm-choices">
 
-            <div class="frame-double-line">=============================</div>
+            </div>
+
+            <div class="frame-double-line">====</div>
 
             <div>
-                <span class="confirm-button-edit">Change something</span> |
-                <span class="confirm-button-submit">Submit it!</span>
+                <span id="confirm-button-edit">Change something</span> |
+                <span id="confirm-button-submit">Submit it!</span>
             </div>
 
         </div>
 
         <div id="wait">
-            <div class="frame-line">
-                ----------------------------------
-            </div>
+            <div class="frame-line">----</div>
             <div class="situation-text">
                 A transaction has been made with your new situation.
                 You can stick around here and wait for it to be confirmed,
                 or you can go back to the start of the game and play again.
                 You can also sign your name and it'll be added to any of the situations you've created.
             </div>
-            <div class="frame-line">
-                ----------------------------------
-            </div>
+            <div class="frame-line">----</div>
 
-            <a href="">
-                <div class="option">Back to the start</div>
-            </a>
-            <div class="option">Add signature</div>
+            <div id="wait-restart" class="option">Back to the start</div>
+            <div id="wait-sign" class="option">Add signature</div>
 
         </div>
         
-        
+        <div id="sign">
+            <div class="frame-double-line">====</div>
+
+            <div>Enter your name below to sign your contributions:</div>
+            <div class="frame-line">----</div>
+            <input class="input-choice" id="input-signature"/>
+            <div>
+                <span class="button-sign" id="sign-button-submit">Sign</span> |
+                <span class="button-sign" id="sign-button-cancel">Nevermind</span>
+            </div>
+            <div class="frame-double-line">====</div>
+        </div>
+
+        <div id="signConfirm">
+            <div class="frame-double-line">====</div>
+            <div> A transaction with your signature has been sent.</div>
+            <div class="frame-double-line">====</div>
+
+            <div class="option" id="sign-confirm-restart"> - Restart Game - </div>
+        </div>
+
     </div>
 
 </body>
-<script>Game(
-    document.getElementById("game"),
-    Contract()
-);</script>
+<script>
+    let game = Game(
+        document.getElementById("game"),
+        Contract()
+    );
+</script>
 </html>
