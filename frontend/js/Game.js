@@ -216,7 +216,7 @@ function Game(container,contract){
             let previous_situation = {found:false};
             while(!previous_situation.found){
                 //Endless loop for load fails.. no way that can go badly
-                console.log('load previous situation',id);
+                console.log('load previous situation',from_situation);
                 previous_situation = await contract.get_situation(from_situation);
 
             }
