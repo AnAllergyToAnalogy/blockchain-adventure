@@ -1,12 +1,8 @@
 const Contract  = () => {
     if (typeof web3 !== 'undefined') {
-        console.log('no web3');
+        // console.log('no web3');
         web3 = new Web3(web3.currentProvider);
     } else {
-
-        // Set the provider you want from Web3.providers
-        // let provider = "https://mainnet.infura.io/ig6kT98jxZiw5QM7QTRn";
-
         let provider;
         if(window.ethereum){
             provider = window.ethereum;
@@ -18,7 +14,6 @@ const Contract  = () => {
 
     }
 
-    // const address = "0xb54c8a32b1d132be0c49c72740528caae15f61db";
     const address = "0x962f64b0f3aa2f5876bc1a107f91c350f8dca089";
     const compiled = {
         "Adventure": {
@@ -12363,11 +12358,6 @@ const Contract  = () => {
         address
     );
 
-
-    // let contract_0 = web3.eth.contract(abi_array);
-    // let instance_0 = contract_0.at(address);
-
-
     let account;
     let contract = {
         check_metamask: () => {
@@ -12375,10 +12365,6 @@ const Contract  = () => {
         },
 
         init: async () => {
-            // console.log(web3);
-            // web3.currentProvider.publicConfigStore.on('update',(d,e) => {
-            //     console.log(e,d);
-            // });
             await contract.get_account();
         },
         get_account: async () => {
@@ -12403,8 +12389,6 @@ const Contract  = () => {
         },
 
         get_situation: async (id) => {
-            // await instance.methods.
-
             const situation = await instance.getPastEvents("Situation", {
                 filter: {id: [id]},
                 fromBlock: 0,
@@ -12432,9 +12416,7 @@ const Contract  = () => {
         },
         get_closable: async () =>{
             let pathwayCount = await instance.methods.get_pathwayCount().call();
-            // console.log('pathwayCount',pathwayCount);
             return (String(pathwayCount) !== '1');
-            // return (await instance.methods.get_pathwayCount().call()) !== '0');
         },
         get_next_situation: async (fromSituation, fromChoice) => {
             return await instance.methods.get_next_situation(fromSituation, fromChoice).call();
@@ -12476,9 +12458,6 @@ const Contract  = () => {
             }
         },
         add_signature: async (signature) => {
-            // var getData = myContract.myFunction.getData(function parameters);
-            // var getData = myContract.myFunction.getData(function parameters);
-
             let toSend = instance.methods.add_signature(signature);
             let tx = toSend.send({
                 from:account
@@ -12491,7 +12470,6 @@ const Contract  = () => {
         },
     }
     contract.init();
-
 
     function Choice(choiceText){
         return web3.utils.fromAscii(choiceText);

@@ -21,7 +21,6 @@ function Game(container,contract){
 
             submit: () =>{
                 //parse the input
-
                 SetText(ById("input-error"),"");
 
                 if(game.create.situationText.trim() === ""){
@@ -37,13 +36,9 @@ function Game(container,contract){
                             "Error: your choice is too long (32 char max)"
                         );
                         field.setAttribute("class","input-choice input-choice-invalid");
-                        // input.setAttribute("class","input-choice");
                         return;
                     }
                 }
-
-                console.log('closable');
-                console.log(game.create.closable,game.create.choiceFields.length);
 
                 if(!game.create.closable && game.create.choiceFields.length === 0){
                     SetText(ById("input-error"),
@@ -51,18 +46,6 @@ function Game(container,contract){
                     );
                     return;
                 }
-
-                // game.create.choiceFields.forEach (field => {
-                //     if(field.value.length > 32){
-                //         SetText(ById("input-error"),
-                //             "Error, your choice is too long (32 char max)"
-                //         );
-                //         field.setAttribute("class","input-choice input-choice-invalid");
-                //         // input.setAttribute("class","input-choice");
-                //         return;
-                //     }
-                // });
-
                 game.open_confirm();
             },
             reset: () => {
@@ -82,12 +65,9 @@ function Game(container,contract){
                     game.create.read_choices(false);
                     event.target.setAttribute("class","input-choice");
                     SetText(ById("input-error"),"");
-                    // console.log(event.target.value)
                 });
                 input.addEventListener("blur", event => {
-                    // setTimeout(()=>{
-                        game.create.read_choices(true);
-                    // },200);
+                    game.create.read_choices(true);
                 });
 
                 game.create.choiceFields.push(input);
@@ -98,7 +78,6 @@ function Game(container,contract){
                 let choices = [];
                 for(let i = 0; i < game.create.choiceFields.length; i++){
                     let field = game.create.choiceFields[i];
-                    // game.create.choiceFields.forEach( field => {
                     let value = field.value.trim();
                    if( value !== ""){
                         choices.push(value);
@@ -144,10 +123,8 @@ function Game(container,contract){
         reveals: (elements /*array*/) => {
               for(let i = 0; i < elements.length; i++){
                 Show(elements[i],false);
-                  // elements[i].style.display = "none";
                 setTimeout(()=>{
                     Show(elements[i],true);
-                    // elements[i].style.display = "initial";
                 }, (i + 1) * 50);
               }
         },
@@ -165,10 +142,8 @@ function Game(container,contract){
             });
 
             ById("input-situation").addEventListener("change", event => {
-                // game.create.read_choices(false);
                 game.create.situationText = event.target.value.trim();
                 SetText(ById("input-error"),"");
-                // console.log(event.target.value)
             });
 
 
@@ -181,7 +156,6 @@ function Game(container,contract){
 
             onClick(ById("input-add-choice"),()=>{
                 game.create.add_choice();
-                // game.create.choiceFields[game.create.choiceFields.length - 1].focus();
             });
             onClick(ById("input-submit-situation"), ()=>{
                 game.create.submit();
@@ -195,7 +169,6 @@ function Game(container,contract){
                 game.show_screen('create');
             });
             onClick(ById('confirm-button-submit'), () =>{
-                // console.log('submit');
                 game.confirm.submit();
             });
 
@@ -203,10 +176,6 @@ function Game(container,contract){
             //Signature
             ById("input-signature").addEventListener("change", event => {
                 game.sign.signature = event.target.value;
-
-                // game.create.situationText = event.target.value.trim();
-                // SetText(ById("input-error"),"");
-                // console.log(event.target.value)
             });
             onClick(ById("sign-button-cancel"),()=>{
                 game.start();
@@ -222,12 +191,6 @@ function Game(container,contract){
         show_screen: (screen) => {
               for(let s in game.screens){
                   Show(game.screens[s],s === screen);
-                  //
-                  // if(s === screen){
-                  //   game.screens[s].style.display = "initial";
-                  // }else{
-                  //     game.screens[s].style.display = "none";
-                  // }
               }
         },
         start: () => {
@@ -238,8 +201,6 @@ function Game(container,contract){
                   let screen_elements = game.screens.welcome.children;
                   game.reveals(screen_elements);
               },200);
-              // console.log(container);
-
         },
 
         open_create: async(from_situation,from_choice) => {
@@ -303,9 +264,6 @@ function Game(container,contract){
         open_sign: () => {
               game.sign.signature = '';
             ById("input-signature").value = '';
-            // SetText(,"");
-
-
             game.show_screen(false);
             let screen_elements = game.screens.sign.children;
             game.reveals(screen_elements);
@@ -381,8 +339,6 @@ function Game(container,contract){
             SetText(ById('credit-author'),author);
         },
         prompt_situation_creation: async(from_situation, from_choice) =>{
-              //TODO: find where these params are being dropped
-
             game.show_screen(false);
 
             let metamasked = contract.check_metamask();
@@ -452,8 +408,6 @@ function Game(container,contract){
         },
         goto_next_situation: async (from_situation, from_choice) => {
             game.show_screen(false);
-            // console.log(from_situation,from_choice);
-            //TODO: may need to async here
             let next_situation = await contract.get_next_situation(from_situation,from_choice);
             if(next_situation !== '0'){
                 game.open_situation(next_situation);
@@ -463,9 +417,6 @@ function Game(container,contract){
 
         }
     };
-
-    // console.log(game.screens.welcome.getElementsByClassName("title"));//.style.color = "red";
-
     game.init();
     game.start();
     return game;
