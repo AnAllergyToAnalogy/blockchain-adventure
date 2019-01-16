@@ -8,13 +8,14 @@ const Contract  = () => {
             provider = window.ethereum;
 
         }else{
-            provider = new Web3.providers.HttpProvider("https://rinkeby.infura.io/ig6kT98jxZiw5QM7QTRn");
+            // provider = new Web3.providers.HttpProvider("https://rinkeby.infura.io/ig6kT98jxZiw5QM7QTRn");
+            provider = new Web3.providers.HttpProvider("https://mainnet.infura.io/ig6kT98jxZiw5QM7QTRn");
         }
         web3 = new Web3(provider);
 
     }
 
-    const address = "0x962f64b0f3aa2f5876bc1a107f91c350f8dca089";
+    const address = "0x77b4acc38da51a0e77c77355cfd28c1a6619f6ba";
     const compiled = {
         "Adventure": {
             "abi": [
