@@ -3,6 +3,7 @@ function Game(container,contract){
           screens: {
               welcome:      ById("welcome"),
               situation:    ById("situation"),
+              loading:      ById("loading"),
               create:       ById("create"),
               confirm:      ById("confirm"),
               wait:         ById("wait"),
@@ -204,12 +205,14 @@ function Game(container,contract){
         },
 
         open_create: async(from_situation,from_choice) => {
-              console.log('open create',from_situation,from_choice);
+
+
           game.create.fromSituation = from_situation;
           game.create.fromChoice = from_choice;
 
             game.create.reset();
-            game.show_screen(false);
+            game.show_screen("loading");
+
             let previous_situation = await contract.get_situation(from_situation);
             SetText(ById('create-prev-situation'),previous_situation.situationText);
 
@@ -280,12 +283,12 @@ function Game(container,contract){
         },
 
         open_situation: async (id) => {
-            game.show_screen(false);
+            game.show_screen("loading");
 
             ById('situation-text').style.color = "#FFFFFF";
 
             let situation = await contract.get_situation(id);
-
+            game.show_screen(false);
             //Clear Choices
             while(game.screens.situation.children.length > 4){
                 let length = game.screens.situation.children.length;
@@ -407,7 +410,7 @@ function Game(container,contract){
             game.reveals(screen_elements);
         },
         goto_next_situation: async (from_situation, from_choice) => {
-            game.show_screen(false);
+            game.show_screen("loading");
             let next_situation = await contract.get_next_situation(from_situation,from_choice);
             if(next_situation !== '0'){
                 game.open_situation(next_situation);
