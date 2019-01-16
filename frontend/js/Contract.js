@@ -12392,15 +12392,17 @@ const Contract  = () => {
         get_situation: async (id) => {
             const situation = await instance.getPastEvents("Situation", {
                 filter: {id: [id]},
-                fromBlock: 0,
+                fromBlock: 7073631,
                 toBlock: 'latest'
             }).then(events => {
+                // console.log('got situation',events[0].returnValues);
                 return {
                     found: true,
                     situationText: events[0].returnValues.situationText,
                     choiceText: DeChoices(events[0].returnValues.choiceTexts)
                 }
             }).catch(error => {
+                // console.log('failed to get situation',error);
                 return {
                     found: false,
                     error: error,

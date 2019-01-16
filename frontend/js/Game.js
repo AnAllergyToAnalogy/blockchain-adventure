@@ -213,7 +213,13 @@ function Game(container,contract){
             game.create.reset();
             game.show_screen("loading");
 
-            let previous_situation = await contract.get_situation(from_situation);
+            let previous_situation = {found:false};
+            while(!situation.found){
+                //Endless loop for load fails.. no way that can go badly
+                console.log('load previous situation',id);
+                previous_situation = await contract.get_situation(from_situation);
+
+            }
             SetText(ById('create-prev-situation'),previous_situation.situationText);
 
 
@@ -287,7 +293,13 @@ function Game(container,contract){
 
             ById('situation-text').style.color = "#FFFFFF";
 
-            let situation = await contract.get_situation(id);
+            let situation = {found:false};
+            while(!situation.found){
+                //Endless loop for load fails.. no way that can go badly
+                console.log('load situation',id);
+                situation = await contract.get_situation(id);
+            }
+
             game.show_screen(false);
             //Clear Choices
             while(game.screens.situation.children.length > 4){
