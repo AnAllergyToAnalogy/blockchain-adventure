@@ -44,7 +44,9 @@ contract Adventure {
         string memory situationText,
         bytes32[] memory choiceTexts) public{
         //Make sure there is still at least one open pathway
-        require(pathwayCount - 1 + choiceTexts.length > 0,"pathwayCount");
+        //TODO: inderflow
+//        require(pathwayCount - 1 + choiceTexts.length > 0,"pathwayCount");
+        require(pathwayCount + choiceTexts.length > 1, "pathwayCount");
 
         //Make sure they didn't leave situationText blank
         require(bytes(situationText).length > 0,"situation");
@@ -87,6 +89,10 @@ contract Adventure {
     }
     function get_author(uint situation) public view returns(address){
         return authors[situation];
+    }
+
+    function get_pathwayCount() public view returns(uint){
+        return pathwayCount;
     }
 
     function get_next_situation(uint fromSituation, uint fromChoice) public view returns(uint){

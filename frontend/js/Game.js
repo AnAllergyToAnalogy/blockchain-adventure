@@ -17,6 +17,8 @@ function Game(container,contract){
             choices: [],
             choiceFields: [],
 
+            closable: false,
+
             submit: () =>{
                 //parse the input
 
@@ -24,7 +26,7 @@ function Game(container,contract){
 
                 if(game.create.situationText.trim() === ""){
                     SetText(ById("input-error"),
-                        "Error, your situation text is empty"
+                        "Error: your situation text is empty"
                     );
                     return;
                 }
@@ -32,12 +34,22 @@ function Game(container,contract){
                     let field = game.create.choiceFields[c];
                     if(field.value.length > 32){
                         SetText(ById("input-error"),
-                            "Error, your choice is too long (32 char max)"
+                            "Error: your choice is too long (32 char max)"
                         );
                         field.setAttribute("class","input-choice input-choice-invalid");
                         // input.setAttribute("class","input-choice");
                         return;
                     }
+                }
+
+                console.log('closable');
+                console.log(game.create.closable,game.create.choiceFields.length);
+
+                if(!game.create.closable && game.create.choiceFields.length === 0){
+                    SetText(ById("input-error"),
+                        "Error: this is the last open pathway, so you must provide at least one choice."
+                    );
+                    return;
                 }
 
                 // game.create.choiceFields.forEach (field => {
@@ -190,7 +202,7 @@ function Game(container,contract){
 
             //Signature
             ById("input-signature").addEventListener("change", event => {
-                game.sign.signature = event.target.value();
+                game.sign.signature = event.target.value;
 
                 // game.create.situationText = event.target.value.trim();
                 // SetText(ById("input-error"),"");
@@ -231,8 +243,9 @@ function Game(container,contract){
         },
 
         open_create: async(from_situation,from_choice) => {
-          game.create.from_situation = from_situation;
-          game.create.from_choice = from_choice;
+              console.log('open create',from_situation,from_choice);
+          game.create.fromSituation = from_situation;
+          game.create.fromChoice = from_choice;
 
             game.create.reset();
             game.show_screen(false);
@@ -254,8 +267,14 @@ function Game(container,contract){
             game.reveals(screen_elements);
 
             game.show_screen('create');
+
+            game.create.closable = await contract.get_closable();
         },
         open_confirm: () => {
+              console.log('open confirm',
+                  game.create.fromSituation,
+                  game.create.fromChoice);
+
             game.show_screen(false);
               SetText(ById("confirm-situation"),game.create.situationText);
               if(game.create.choices.length > 0){
@@ -355,17 +374,29 @@ function Game(container,contract){
               let screen_elements = game.screens.situation.children;
               game.reveals(screen_elements);
 
-            let author = await contract.get_author(id);
-            SetText(ById('credit-author'),author);
+
             let signature = await contract.get_signature(id);
             SetText(ById('credit-signature'),signature);
+            let author = await contract.get_author(id);
+            SetText(ById('credit-author'),author);
         },
-        propt_situation_creation: async(from_situation,from_choice) =>{
+        prompt_situation_creation: async(from_situation, from_choice) =>{
+              //TODO: find where these params are being dropped
+
             game.show_screen(false);
 
-            SetText(ById('situation-text'),
-                "It looks like nobody has decided what happens next... yet. But don't despair! You can go back to the previous situation, or if you're feeling creative, add to the story."
-            );
+            let metamasked = contract.check_metamask();
+
+            if(metamasked){
+                SetText(ById('situation-text'),
+                    "It looks like nobody has decided what happens next... yet. But don't despair! You can go back to the previous situation, or if you're feeling creative, add to the story."
+                );
+            }else{
+                SetText(ById('situation-text'),
+                    "It looks like nobody has decided what happens next... yet. But don't despair! You can go back to the previous situation, or if you enable MetaMask, add to the story."
+                );
+            }
+
             ById('situation-text').style.color = "#00ffff";
 
             let author = "";
@@ -379,27 +410,34 @@ function Game(container,contract){
                 )
             }
 
+            let c = 3;
+
             //Add new choices
             let go_back  = Option("Take me back to the last situation");
             onClick(go_back,()=>{game.open_situation(from_situation)});
             game.screens.situation.insertBefore(
                 go_back,
-                game.screens.situation.children[3]
+                game.screens.situation.children[c++]
             );
 
-            let add_situation = Option("Add to the story");
-            onClick(add_situation,()=>{game.open_create(from_situation,from_choice)});
-            game.screens.situation.insertBefore(
-                add_situation,
-                game.screens.situation.children[4]
-            )
+            if(metamasked){
+                let add_situation = Option("Add to the story");
+                onClick(add_situation,()=>{
+                    game.open_create(from_situation,from_choice);
+                });
+                game.screens.situation.insertBefore(
+                    add_situation,
+                    game.screens.situation.children[c++]
+                );
+
+            }
 
 
             let play_again = Option("Start the game again");
             onClick(play_again,game.start);
             game.screens.situation.insertBefore(
                 play_again,
-                game.screens.situation.children[5]
+                game.screens.situation.children[c++]
             )
 
 
@@ -420,7 +458,7 @@ function Game(container,contract){
             if(next_situation !== '0'){
                 game.open_situation(next_situation);
             }else{
-                game.propt_situation_creation(from_situation,from_choice);
+                game.prompt_situation_creation(from_situation,from_choice);
             }
 
         }
@@ -430,9 +468,6 @@ function Game(container,contract){
 
     game.init();
     game.start();
-    // game.open_create('0','0');
-    // game.open_wait();
-
     return game;
 
     function onClick(element, action){

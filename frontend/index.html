@@ -5,6 +5,7 @@
     <title>Adventure Game</title>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js" integrity="sha256-nWBTbvxhJgjslRyuAKJHK+XcZPlCnmIAAMixz6EefVk=" crossorigin="anonymous"></script>
 
+
     <script src="js/Game.js"></script>
     <script src="js/Contract.js"></script>
 
@@ -57,6 +58,17 @@
 
         text-align: center;
     }
+
+    p{
+        width: 80%;
+        margin: 0 auto;
+        margin-bottom:14px;
+    }
+
+    .frame-double-line{
+        padding-top:14px;
+        padding-bottom:14px;
+    }
     #game{
         display:none;
         padding-top: 56px;
@@ -102,12 +114,24 @@
     #welcome{
         /*display:none;*/
     }
+    .title{
+        color: #0F0;
+        width:80%;
+        margin: 0 auto;
+    }
     /*Wecome*/
     .start:hover{
 
         background-color: white;
         color:black;
 
+    }
+    .welcome-link{
+        color:#0FF;
+    }
+    .welcome-link:hover{
+        background-color:#0FF;
+        color:#000;
     }
 
 
@@ -223,9 +247,25 @@
 
     <div id="game">
         <div id="welcome">
+            <div class="frame-double-line">====</div>
+
             <div class="title">
-                Title screen goes here.
+               = ADVENTUREUM =
             </div>
+            <div class="frame-double-line">====</div>
+            <p>
+                Welcome to the world's first text-based, crowd-sourced, decentralised choose-your-own adventure game.
+            </p>
+            <p>
+                Every situation and choice in this game has been defined by other players, and all this is stored on the Ethereum mainnet.
+            </p>
+            <p>
+                Game created by <a href="https://github.com/AnAllergyToAnalogy" class="welcome-link">AnAllergyToAnalogy</a>, with source code available on
+                <a href="https://github.com/AnAllergyToAnalogy/blockchain-adventure" class="welcome-link">GitHub</a>.
+
+            </p>
+
+            <div class="frame-double-line">====</div>
 
             <a href="" class="control-button" id="start-game">
                 <div class="start">
@@ -257,7 +297,6 @@
         <div id="create">
             <div class="frame-double-line">====</div>
             <div >Previous situation:</div>
-            <div class="frame-line">----</div>
             <div id="create-prev-situation">You are in the forest and millions of ducks are around you trying to destroy your house and you have no friends so now what are you gonna do?</div>
             <div class="frame-line">----</div>
 
@@ -271,8 +310,7 @@
             <div class="frame-double-line">====</div>
 
             <div>The next situation:</div>
-            <div class="frame-line">----</div>
-            <!--class="input-situation"-->
+
             <textarea
                     id="input-situation"
 
@@ -282,11 +320,10 @@
             <div id="input-choices">
 
             </div>
-            <!--<input type="text" class="input-choice"/>-->
-            <!--<input type="text" class="input-choice input-choice-invalid"/>-->
+
             <div>
                 <span class="input-button" id="input-add-choice">Add a Choice</span> |
-                <span class="input-button" id="input-submit-situation">Submit Situaton</span>
+                <span class="input-button" id="input-submit-situation">Submit Situation</span>
             </div>
             <div id="input-error">
                 This is the problem with your situation!
@@ -334,8 +371,8 @@
             <div class="frame-line">----</div>
             <input class="input-choice" id="input-signature"/>
             <div>
-                <span class="button-sign" id="sign-button-submit">Sign</span> |
-                <span class="button-sign" id="sign-button-cancel">Nevermind</span>
+                <span class="button-sign" id="sign-button-cancel">Never mind</span> |
+                <span class="button-sign" id="sign-button-submit">Sign</span>
             </div>
             <div class="frame-double-line">====</div>
         </div>
@@ -352,9 +389,9 @@
 
 </body>
 <script>
-    let game = Game(
+    (Game(
         document.getElementById("game"),
         Contract()
-    );
+    ));
 </script>
 </html>
