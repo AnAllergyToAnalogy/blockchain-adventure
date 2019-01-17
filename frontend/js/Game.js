@@ -1,6 +1,8 @@
 function Game(container,contract){
     let game = {
           screens: {
+              networkCheck:      ById("networkCheck"),
+
               welcome:      ById("welcome"),
               situation:    ById("situation"),
               loading:      ById("loading"),
@@ -9,6 +11,8 @@ function Game(container,contract){
               wait:         ById("wait"),
               sign:         ById("sign"),
               signConfirm:  ById("signConfirm"),
+
+              learn:        ById("learn"),
           },
         create:{
               fromSituation: 0,
@@ -138,13 +142,24 @@ function Game(container,contract){
 
 
             //Start page
-            onClick(ById("start-game"),()=>{
+            onClick(ById("start-game"),async ()=>{
                 game.open_situation(0);
+
+                //Hacky last chance way of checking they aren't entering on wrong network
+                let network = await web3.eth.net.getId();
+                if(String(network) !== '1'){
+                    location.reload();
+                }
             });
 
             ById("input-situation").addEventListener("change", event => {
                 game.create.situationText = event.target.value.trim();
                 SetText(ById("input-error"),"");
+            });
+
+
+            onClick(ById("welcome-button-metamask"), ()=>{
+                game.open_learn();
             });
 
 
@@ -187,6 +202,11 @@ function Game(container,contract){
             onClick(ById("sign-confirm-restart"), () =>{
                game.start();
             });
+
+            //Learn
+            onClick(ById("learn-button-restart"), () =>{
+               game.start();
+            });
         },
 
         show_screen: (screen) => {
@@ -194,10 +214,26 @@ function Game(container,contract){
                   Show(game.screens[s],s === screen);
               }
         },
-        start: () => {
+        start: async () => {
+              if(!contract.check_network()){
+                    let network = await web3.eth.net.getId();
+                    if(String(network) !== '1'){
+                        setTimeout(()=> {
+                            container.style.display = "inherit";
+                            game.show_screen("networkCheck");
+
+                            let screen_elements = game.screens.networkCheck.children;
+                            game.reveals(screen_elements);
+                        },200);
+                        return;
+                    }
+              }
+
               setTimeout(()=>{
                   container.style.display = "inherit";
                   game.show_screen("welcome");
+
+                  Show(ById("reminder-metamask"),!contract.check_metamask());
 
                   let screen_elements = game.screens.welcome.children;
                   game.reveals(screen_elements);
@@ -216,7 +252,6 @@ function Game(container,contract){
             let previous_situation = {found:false};
             while(!previous_situation.found){
                 //Endless loop for load fails.. no way that can go badly
-                console.log('load previous situation',from_situation);
                 previous_situation = await contract.get_situation(from_situation);
 
             }
@@ -241,10 +276,6 @@ function Game(container,contract){
             game.create.closable = await contract.get_closable();
         },
         open_confirm: () => {
-              console.log('open confirm',
-                  game.create.fromSituation,
-                  game.create.fromChoice);
-
             game.show_screen(false);
               SetText(ById("confirm-situation"),game.create.situationText);
               if(game.create.choices.length > 0){
@@ -261,6 +292,14 @@ function Game(container,contract){
             game.reveals(screen_elements);
 
           game.show_screen('confirm');
+        },
+
+        open_learn: () => {
+            game.show_screen(false);
+            let screen_elements = game.screens.learn.children;
+            game.reveals(screen_elements);
+
+            game.show_screen('learn');
         },
 
         open_wait: () => {
@@ -296,7 +335,6 @@ function Game(container,contract){
             let situation = {found:false};
             while(!situation.found){
                 //Endless loop for load fails.. no way that can go badly
-                console.log('load situation',id);
                 situation = await contract.get_situation(id);
             }
 
@@ -400,7 +438,15 @@ function Game(container,contract){
                     add_situation,
                     game.screens.situation.children[c++]
                 );
-
+            }else{
+                let add_situation = Option("Learn about Metamask");
+                onClick(add_situation,()=>{
+                    game.open_learn();
+                });
+                game.screens.situation.insertBefore(
+                    add_situation,
+                    game.screens.situation.children[c++]
+                );
             }
 
 
@@ -502,20 +548,6 @@ function Game(container,contract){
         for(let l = 0; l < doubleLines.length; l++){
             doubleLines[l].innerText = doubleLine;
         }
-
-        // singleLines.forEach(line =>{
-        //     line.innerText = singleLine;
-        // });
-        // let doubleLines = document.getElementsByClassName("frame-double-line");
-        // doubleLines.forEach(line =>{
-        //     line.innerText = doubleLine;
-        // });
-
-
-        // console.log('test');
-        // console.log(window.innerWidth);
-        // console.log(ById("measurement").clientWidth)
-        // console.log(ById("measurement").clientWidth)
     }
 }
 

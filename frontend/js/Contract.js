@@ -12359,14 +12359,18 @@ const Contract  = () => {
         address
     );
 
-    let account;
+    let account, network;
     let contract = {
         check_metamask: () => {
             return account !== "0x0";
         },
+        check_network: () => {
+            return String(network) === '1';
+        },
 
         init: async () => {
             await contract.get_account();
+            network = await web3.eth.net.getId();
         },
         get_account: async () => {
             web3.eth.getAccounts().then((accounts) => {

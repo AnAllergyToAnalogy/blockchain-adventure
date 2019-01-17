@@ -259,6 +259,13 @@
     <div id="measurement">=</div>
 
     <div id="game">
+        <div id="networkCheck">
+            <div class="frame-double-line">====</div>
+            <div class="title">
+                Error: Please switch to the Ethereum mainnet.
+            </div>
+            <div class="frame-double-line">====</div>
+        </div>
         <div id="welcome">
             <div class="frame-double-line">====</div>
 
@@ -271,11 +278,13 @@
             </p>
             <p>
                 Every situation and choice in this game has been defined by other players, and all this is stored on the Ethereum mainnet.
+                <span id="reminder-metamask">
+                    If you use <a id="welcome-button-metamask" class="welcome-link">Metamask</a>, enable it and login now.
+                </span>
             </p>
             <p>
                 Game created by <a href="https://github.com/AnAllergyToAnalogy" class="welcome-link">AnAllergyToAnalogy</a>, with source code available on
                 <a href="https://github.com/AnAllergyToAnalogy/blockchain-adventure" class="welcome-link">GitHub</a>.
-
             </p>
 
             <div class="frame-double-line">====</div>
@@ -402,6 +411,25 @@
             <div class="frame-double-line">====</div>
 
             <div class="option" id="sign-confirm-restart"> - Restart Game - </div>
+        </div>
+
+        <div id="learn">
+            <div class="frame-double-line">====</div>
+                <div class="title">What is Metamask?</div>
+
+            <div class="frame-double-line">====</div>
+                <p><a href="https://metamask.io/" class="welcome-link">Metamask</a> is a browser extension that lets you interact with the Ethereum blockchain. It works with most popular browsers (except for Safari because that's made by contrarian hipsters). </p>
+                <p>If you want to read data from the blockchain, it won't cost you anything, but if you want to add data, or make any other changes to the network, you have to pay a bit of Ether (ETH). It will only cost a few cents in real money.</p>
+                <p>This Ether is given to miners, and is their reward for running this decentralised network on their computers. The miners can't modify your data, control what you do, or steal your Ether, you're basically just paying them a little bit to borrow some of the computer power.</p>
+
+                <p>Once you have Metamask installed, you'll need to get your hands on some Ether. If you don't know where to get it, just ask your nerdiest friend where to buy cryptocurrency.</p>
+
+                <p>Then you're all set. When you reach a point in the game where the story is incomplete, the game will let you write your own contribution and Metamask will take care of all the technical stuff. You don't need to know anything about coding or blockchains.</p>
+            <div class="frame-line">----</div>
+
+            <div class="option" id="learn-button-restart"> Cool, take me back to the game </div>
+            <div>&nbsp;</div>
+            <div class="frame-line">----</div>
         </div>
 
     </div>
