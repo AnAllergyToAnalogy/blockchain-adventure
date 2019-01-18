@@ -12354,7 +12354,7 @@ const Contract  = () => {
     }
     const bytecode = compiled.Adventure.evm.bytecode.object;
 
-    const instance = new web3.eth.Contract(
+    let instance = new web3.eth.Contract(
         abi_array,
         address
     );
@@ -12428,33 +12428,28 @@ const Contract  = () => {
         get_next_situation: async (fromSituation, fromChoice) => {
             return await instance.methods.get_next_situation(fromSituation, fromChoice).call();
         },
-        add_situation: async (fromSituation, fromChoice, situationText, choiceTexts) => {
-
-
+        add_situation: (fromSituation, fromChoice, situationText, choiceTexts, callback) => {
             //TODO: get the callback,
             try{
 
                 let toSend = instance.methods.add_situation(fromSituation, fromChoice, situationText, Choices(choiceTexts));
-                // let gasEstimate = await toSend.estimateGas();
-                // gasEstimate
 
-                // web3.eth.sendTransaction(toSee)
-                // toSend.sendTransaction
-
-                let tx = toSend.send({
-                    from:account
-                }).then(hash => {
-                    // console.log('got hash');
-                    // console.log(hash);
-                });
-                //
-                // await toSend.send({
-                //     from: account
-                // }).then((e,d)=>{
-                //     console.log('tx finished');
-                //     console.log(e);
-                //     console.log(d);
+                // let tx = toSend.send({
+                //     from:account
                 // });
+
+
+                web3.eth.sendTransaction({
+                    from: account,
+                    to: address,
+                    data:toSend.encodeABI()
+                },(err)=>{
+                    callback({
+                        accepted: !err,
+                        hash: '0x0'
+                    });
+                });
+
                 console.log('tx sent');
             }catch(err){
                 console.log('tx failed');
@@ -12464,16 +12459,28 @@ const Contract  = () => {
                 hash: '0x0'
             }
         },
-        add_signature: async (signature) => {
+        add_signature: (signature,callback) => {
             let toSend = instance.methods.add_signature(signature);
-            let tx = toSend.send({
-                from:account
+            // let tx = toSend.send({
+            //     from:account
+            // });
+
+            web3.eth.sendTransaction({
+                from: account,
+                to: address,
+                data:toSend.encodeABI()
+            },(err)=>{
+                callback({
+                   accepted: !err,
+                   hash: '0x0'
+                });
             });
 
-            return {
-                accepted: true,
-                hash: '0x0',
-            }
+
+            // return {
+            //     accepted: true,
+            //     hash: '0x0',
+            // }
         },
     }
     contract.init();

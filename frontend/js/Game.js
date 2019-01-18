@@ -100,12 +100,14 @@ function Game(container,contract){
                   game.create.fromSituation,
                   game.create.fromChoice,
                     game.create.situationText,
-                    game.create.choices
+                    game.create.choices,
+                    (transaction) => {
+                        if(transaction.accepted){
+                            game.wait.hash = transaction.hash;
+                            game.open_wait();
+                        }
+                    }
                 );
-                if(transaction.accepted){
-                    game.wait.hash = transaction.hash;
-                    game.open_wait();
-                }
             }
         },
         wait: {
@@ -116,11 +118,14 @@ function Game(container,contract){
               signature: '',
             submit: async() =>{
                 let transaction = await contract.add_signature(
-                    game.sign.signature
+                    game.sign.signature,
+                    (transaction) => {
+                        if(transaction.accepted){
+                            game.open_signConfirm();
+                        }
+                    }
                 );
-                if(transaction.accepted){
-                    game.open_signConfirm();
-                }
+
             }
         },
 
