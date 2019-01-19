@@ -144,6 +144,7 @@ function Game(container,contract){
             }
         },
 
+        breadCrumbs: {now:0,last:0},
 
         reveals: (elements /*array*/) => {
               for(let i = 0; i < elements.length; i++){
@@ -435,7 +436,13 @@ function Game(container,contract){
                 game.screens.situation.insertBefore(
                     play_again,
                     game.screens.situation.children[4]
-                )
+                );
+                let go_back  = Option("Take me back to the last situation");
+                onClick(go_back,()=>{game.open_situation(game.breadCrumbs.last)});
+                game.screens.situation.insertBefore(
+                    go_back,
+                    game.screens.situation.children[5]
+                );
             }
 
 
@@ -536,6 +543,8 @@ function Game(container,contract){
             game.show_screen("loading");
             let next_situation = await contract.get_next_situation(from_situation,from_choice);
             if(next_situation !== '0'){
+                game.breadCrumbs.last = game.breadCrumbs.now;
+                game.breadCrumbs.now = next_situation;
                 game.open_situation(next_situation);
             }else{
                 game.prompt_situation_creation(from_situation,from_choice);
