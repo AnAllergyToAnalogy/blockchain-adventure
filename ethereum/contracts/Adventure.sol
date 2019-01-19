@@ -44,8 +44,6 @@ contract Adventure {
         string memory situationText,
         bytes32[] memory choiceTexts) public{
         //Make sure there is still at least one open pathway
-        //TODO: inderflow
-//        require(pathwayCount - 1 + choiceTexts.length > 0,"pathwayCount");
         require(pathwayCount + choiceTexts.length > 1, "pathwayCount");
 
         //Make sure they didn't leave situationText blank

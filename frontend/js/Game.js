@@ -104,6 +104,8 @@ function Game(container,contract){
                     (transaction) => {
                         if(transaction.accepted){
                             game.wait.hash = transaction.hash;
+                            game.wait.fromSituation = game.create.fromSituation;
+                            game.wait.fromChoice    = game.create.fromChoice;
                             game.open_wait();
                         }
                     }
@@ -111,8 +113,21 @@ function Game(container,contract){
             }
         },
         wait: {
+            fromSituation: 0,
+            fromChoice: 0,
             hash: '',
-
+            interval: null,
+            doWait: () => {
+                //getting tx receipt doesn't actually matter, it's just the next situation being available which will happen as a result anyway,
+                // or if someone else defines it
+                game.wait.interval = setInterval( async () => {
+                    const next = await contract.get_next_situation(game.wait.fromSituation,game.wait.fromChoice);
+                    if(String(next) !== '0'){
+                        clearInterval(game.wait.interval);
+                        game.goto_next_situation(game.wait.fromSituation,game.wait.fromChoice);
+                    }
+                }, 1000);
+            }
         },
         sign: {
               signature: '',
@@ -151,10 +166,10 @@ function Game(container,contract){
                 game.open_situation(0);
 
                 //Hacky last chance way of checking they aren't entering on wrong network
-                let network = await web3.eth.net.getId();
-                if(String(network) !== '1'){
-                    location.reload();
-                }
+                // let network = await web3.eth.net.getId();
+                // if(String(network) !== '4'){ //main: 1
+                //     location.reload();
+                // }
             });
 
             ById("input-situation").addEventListener("change", event => {
@@ -168,10 +183,14 @@ function Game(container,contract){
             });
 
 
+
+            //Buttons wait
             onClick(ById("wait-sign"), ()=>{
-               game.open_sign();
+                clearInterval(game.wait.interval);
+                game.open_sign();
             });
             onClick(ById("wait-restart"),()=>{
+                clearInterval(game.wait.interval);
                game.start();
             });
 
@@ -204,8 +223,11 @@ function Game(container,contract){
             onClick(ById("sign-button-submit"), ()=>{
                 game.sign.submit();
             });
+
+
             onClick(ById("sign-confirm-restart"), () =>{
-               game.start();
+                clearInterval(game.wait.interval);
+                game.start();
             });
 
             //Learn
@@ -313,6 +335,41 @@ function Game(container,contract){
             game.reveals(screen_elements);
 
             game.show_screen('wait');
+
+            // game.wait.interval = setInterval( async ()=> {
+            //     if(await web3.eth.getTransactionReceipt(game.wait.hash)){
+            //         //Returns null until it returns the object below
+            //         clearInterval(game.wait.interval);
+            //     };
+            // },1000);
+
+            game.wait.doWait();
+
+//             blockHash: "0xcb855c88530e3b6f4b5d16f20cbd148a61dd45d8c053ec2b14fec4202e83f093"
+// ​
+// blockNumber: 3717962
+// ​
+// contractAddress: null
+// ​
+// cumulativeGasUsed: 891250
+// ​
+// from: "0xaea13531ab3726086a02fd9254ee3dc37c876442"
+// ​
+// gasUsed: 95405
+// ​
+// logs: Array [ {…} ]
+//         ​
+// logsBloom: "0x00000000000002000000000000000000000000000000000000002000000000000000100000000000000000000000000000000000000000000040000000000000000000080000000000000000000000000000000000000000000000000000000008000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+// ​
+// status: true
+// ​
+// to: "0x03f5afaa886578069f86e9722949ad3e5a38ce3b"
+// ​
+// transactionHash: "0xb07f596f77ad9b4463c83d79b339e0d3af9c6cc96ed9b2ca95d313f39a26a76c"
+// ​
+// transactionIndex: 3
+
+
         },
         open_sign: () => {
               game.sign.signature = '';
@@ -328,8 +385,11 @@ function Game(container,contract){
             game.show_screen(false);
             let screen_elements = game.screens.signConfirm.children;
             game.reveals(screen_elements);
+            SetText(ById("thanks-signature"),game.sign.signature);
 
             game.show_screen('signConfirm');
+
+            game.wait.doWait();
         },
 
         open_situation: async (id) => {

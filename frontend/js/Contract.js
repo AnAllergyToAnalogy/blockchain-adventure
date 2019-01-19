@@ -15,7 +15,7 @@ const Contract  = () => {
 
     }
 
-    const address = "0x77b4acc38da51a0e77c77355cfd28c1a6619f6ba";
+    const address = "0x77b4acc38da51a0e77c77355cfd28c1a6619f6ba";    //Mainnet
     const compiled = {
         "Adventure": {
             "abi": [
@@ -12365,7 +12365,7 @@ const Contract  = () => {
             return account !== "0x0";
         },
         check_network: () => {
-            return String(network) === '1';
+            return String(network) === '1';  //Mainnet
         },
 
         init: async () => {
@@ -12388,25 +12388,19 @@ const Contract  = () => {
             });
         },
 
-
-        test: ()=>{
-            toSend = instance.methods.add_situation(0, 0, 'ABC', Choices(['test','test']));
-        },
-
         get_situation: async (id) => {
             const situation = await instance.getPastEvents("Situation", {
                 filter: {id: [id]},
                 fromBlock: 7073631,
                 toBlock: 'latest'
             }).then(events => {
-                // console.log('got situation',events[0].returnValues);
                 return {
                     found: true,
                     situationText: events[0].returnValues.situationText,
                     choiceText: DeChoices(events[0].returnValues.choiceTexts)
                 }
             }).catch(error => {
-                // console.log('failed to get situation',error);
+                console.log('failed to get situation',error);
                 return {
                     found: false,
                     error: error,
@@ -12443,10 +12437,10 @@ const Contract  = () => {
                     from: account,
                     to: address,
                     data:toSend.encodeABI()
-                },(err)=>{
+                },(err,hash)=>{
                     callback({
                         accepted: !err,
-                        hash: '0x0'
+                        hash: hash
                     });
                 });
 
@@ -12469,10 +12463,10 @@ const Contract  = () => {
                 from: account,
                 to: address,
                 data:toSend.encodeABI()
-            },(err)=>{
+            },(err,hash)=>{
                 callback({
                    accepted: !err,
-                   hash: '0x0'
+                   hash: hash
                 });
             });
 
