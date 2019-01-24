@@ -21,3 +21,5 @@ If you want to create a game-over situation, then just don't add any choices.
 
 Contract Address:
 [0x77b4acc38da51a0e77c77355cfd28c1a6619f6ba](https://etherscan.io/address/0x77b4acc38da51a0e77c77355cfd28c1a6619f6ba)
+
+Also wrote [an article explaining some of the contract code](https://medium.com/coinmonks/adventures-with-dumb-contracts-18f8ce8414c9).
