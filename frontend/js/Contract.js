@@ -12373,20 +12373,36 @@ const Contract  = () => {
             network = await web3.eth.net.getId();
         },
         get_account: async () => {
-            web3.eth.getAccounts().then((accounts) => {
-                if(accounts.length > 0){
-                    account = accounts[0];
-                    console.log("got account");
-                    console.log(accounts[0]);
-                }else{
-                    //No metamask
-                    console.log('account set to 0x0');
-                    account = "0x0";
-                }
-            }).catch((e) => {
-                console.log('get account failed');
-            });
+            try{
+                let accounts = await ethereum.enable();
+                account = accounts[0];
+                console.log("got account");
+                console.log(account);
+
+            }catch(e){
+                console.log('denied');
+                console.log('account set to 0x0');
+                account = "0x0";
+                // return;
+            }
+
+            // web3.eth.getAccounts().then((accounts) => {
+            //     if(accounts.length > 0){
+            //         account = accounts[0];
+            //         console.log("got account");
+            //         console.log(accounts[0]);
+            //     }else{
+            //         //No metamask
+            //         console.log('account set to 0x0');
+            //         account = "0x0";
+            //     }
+            // }).catch((e) => {
+            //     console.log('get account failed');
+            // });
         },
+
+
+
 
         get_situation: async (id) => {
             const situation = await instance.getPastEvents("Situation", {
