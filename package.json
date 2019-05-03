@@ -9,9 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ganache-cli": "^6.2.5",
+    "ganache-cli": "^6.4.3",
     "mocha": "^5.2.0",
-    "solc": "^0.5.2",
-    "web3": "^1.0.0-beta.37"
+    "solc": "^0.5.8",
+    "web3": "^1.0.0-beta.54"
   }
 }
