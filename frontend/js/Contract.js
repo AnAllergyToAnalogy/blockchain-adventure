@@ -1,19 +1,24 @@
 const Contract  = () => {
     if (typeof web3 !== 'undefined') {
-        // console.log('no web3');
+        console.log('web3 defined');
         web3 = new Web3(web3.currentProvider);
     } else {
         let provider;
-        if(window.ethereum){
+        if(window.ethereum) {
+            console.log('window.ethereum');
             provider = window.ethereum;
-
+        }else if(window.web3 && window.web3.currentProvider){
+            console.log('provider exists');
+            provider = window.web3.currentProvider;
         }else{
-            // provider = new Web3.providers.HttpProvider("https://rinkeby.infura.io/ig6kT98jxZiw5QM7QTRn");
-            provider = new Web3.providers.HttpProvider("https://mainnet.infura.io/ig6kT98jxZiw5QM7QTRn");
+            console.log('infura');
+            provider = new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/2d9d3459d7ef4188a43973a98b27cef7");
         }
         web3 = new Web3(provider);
 
     }
+
+
 
     const address = "0x77b4acc38da51a0e77c77355cfd28c1a6619f6ba";    //Mainnet
     const compiled = {
@@ -12373,8 +12378,21 @@ const Contract  = () => {
             network = await web3.eth.net.getId();
         },
         get_account: async () => {
+
             try{
-                let accounts = await ethereum.enable();
+                let accounts;
+                if(window.ethereum && ethereum.enable){
+                    accounts = await ethereum.enable();
+
+                    if(!accounts){
+                        console.log('fallback to hard get');
+                        accounts = await web3.eth.getAccounts();
+                    }
+
+                }else{
+                    accounts = await web3.eth.getAccounts();
+                }
+
                 account = accounts[0];
                 console.log("got account");
                 console.log(account);
@@ -12383,22 +12401,9 @@ const Contract  = () => {
                 console.log('denied');
                 console.log('account set to 0x0');
                 account = "0x0";
-                // return;
             }
 
-            // web3.eth.getAccounts().then((accounts) => {
-            //     if(accounts.length > 0){
-            //         account = accounts[0];
-            //         console.log("got account");
-            //         console.log(accounts[0]);
-            //     }else{
-            //         //No metamask
-            //         console.log('account set to 0x0');
-            //         account = "0x0";
-            //     }
-            // }).catch((e) => {
-            //     console.log('get account failed');
-            // });
+
         },
 
 
